@@ -5,7 +5,7 @@ import (
 	"context"
 	"strings"
 
-	"github.com/bclswl0827/slgo/handlers"
+	"github.com/yayacat/slgo/handlers"
 )
 
 func (s *SeedLinkServer) handleConnection(ctx context.Context, client *handlers.SeedLinkClient, commands map[string]SeedLinkCommand) {

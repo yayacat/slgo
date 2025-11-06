@@ -3,7 +3,7 @@ package main
 import (
 	"log"
 
-	"github.com/bclswl0827/slgo/handlers"
+	"github.com/yayacat/slgo/handlers"
 )
 
 type hooks struct{}

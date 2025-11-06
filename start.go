@@ -6,7 +6,7 @@ import (
 	"net"
 
 	"github.com/bclswl0827/mseedio"
-	"github.com/bclswl0827/slgo/handlers"
+	"github.com/yayacat/slgo/handlers"
 )
 
 func (s *SeedLinkServer) Start(ctx context.Context, host string, port int, compress bool) error {

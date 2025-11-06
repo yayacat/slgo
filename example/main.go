@@ -11,11 +11,11 @@ import (
 	"os/signal" // Added
 	"syscall"
 
-	"github.com/yayacat/slgo/example/stationxml"
+	stationxml "github.com/yayacat/slgo/example/stationxml"
 
-	"github.com/bclswl0827/slgo"
 	cmap "github.com/orcaman/concurrent-map/v2"
 	messagebus "github.com/vardius/message-bus" // Added
+	"github.com/yayacat/slgo"
 )
 
 func fdsnStationHandler(p *provider) http.HandlerFunc {

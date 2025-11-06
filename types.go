@@ -1,7 +1,7 @@
 package slgo
 
 import (
-	"github.com/bclswl0827/slgo/handlers"
+	"github.com/yayacat/slgo/handlers"
 )
 
 type handler interface {

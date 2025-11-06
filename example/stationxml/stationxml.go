@@ -1,10 +1,12 @@
-// FDSN StationXML Go struct (簡化版)
-package main
+// Package stationxml 實現 FDSN StationXML 的結構
+package stationxml
 
-import "encoding/xml"
+import (
+	"encoding/xml"
+	"time"
+)
 
-// 根據 FDSN StationXML 標準，僅列出常用欄位
-
+// FDSNStationXML 表示 FDSN StationXML 的根元素
 type FDSNStationXML struct {
 	XMLName        xml.Name  `xml:"FDSNStationXML"`
 	Source         string    `xml:"Source"`
@@ -15,6 +17,7 @@ type FDSNStationXML struct {
 	Networks       []Network `xml:"Network"`
 }
 
+// Network 表示台網資訊
 type Network struct {
 	Code        string    `xml:"code,attr"`
 	Description string    `xml:"Description"`
@@ -22,6 +25,7 @@ type Network struct {
 	Stations    []Station `xml:"Station"`
 }
 
+// Station 表示測站資訊
 type Station struct {
 	Code         string    `xml:"code,attr"`
 	Description  string    `xml:"Description"`
@@ -34,10 +38,12 @@ type Station struct {
 	Channels     []Channel `xml:"Channel"`
 }
 
+// Site 表示測站地點資訊
 type Site struct {
 	Name string `xml:"Name"`
 }
 
+// Channel 表示頻道資訊
 type Channel struct {
 	Code         string   `xml:"code,attr"`
 	Location     string   `xml:"locationCode,attr"`
@@ -53,14 +59,17 @@ type Channel struct {
 	StartDate    string   `xml:"StartDate"`
 }
 
+// Sensor 表示感應器資訊
 type Sensor struct {
 	Description string `xml:"Description"`
 }
 
+// Response 表示回應資訊
 type Response struct {
 	InstrumentSensitivity InstrumentSensitivity `xml:"InstrumentSensitivity"`
 }
 
+// InstrumentSensitivity 表示儀器靈敏度資訊
 type InstrumentSensitivity struct {
 	Value       float64 `xml:"Value"`
 	Frequency   float64 `xml:"Frequency"`
@@ -68,6 +77,15 @@ type InstrumentSensitivity struct {
 	OutputUnits Units   `xml:"OutputUnits"`
 }
 
+// Units 表示單位資訊
 type Units struct {
 	Name string `xml:"Name"`
+}
+
+// DateTime 將時間轉換為 string
+func DateTime(t time.Time) string {
+	if t.IsZero() {
+		return ""
+	}
+	return t.Format("2006-01-02T15:04:05.000Z")
 }

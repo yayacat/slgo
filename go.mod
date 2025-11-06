@@ -1,4 +1,4 @@
-module github.com/bclswl0827/slgo
+module github.com/yayacat/slgo
 
 go 1.20
 
@@ -8,3 +8,5 @@ require (
 	github.com/orcaman/concurrent-map/v2 v2.0.1
 	github.com/vardius/message-bus v1.1.5
 )
+
+replace github.com/yayacat/slgo => ./

@@ -6,7 +6,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/bclswl0827/slgo/handlers"
+	"github.com/yayacat/slgo/handlers"
 )
 
 type Stream struct {
@@ -25,9 +25,9 @@ type Station struct {
 }
 
 type provider struct {
-	startTime         time.Time
-	stations          []Station
-	mutex             sync.RWMutex
+	startTime           time.Time
+	stations            []Station
+	mutex               sync.RWMutex
 	hasReceivedRealData bool
 }
 
@@ -44,9 +44,9 @@ func NewProvider(filePath string) (*provider, error) {
 	}
 
 	return &provider{
-		startTime: time.Now().UTC(),
-		stations:  stations,
-		mutex:     sync.RWMutex{},
+		startTime:           time.Now().UTC(),
+		stations:            stations,
+		mutex:               sync.RWMutex{},
 		hasReceivedRealData: false,
 	}, nil
 }
