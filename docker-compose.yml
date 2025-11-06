@@ -1,0 +1,8 @@
+services:
+  slgo:
+    build: .
+    ports:
+      - "18000:18000"
+      - "18080:18080"
+    volumes:
+      - ./example/stations.json:/stations.json

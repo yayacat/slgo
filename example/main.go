@@ -3,16 +3,93 @@ package main
 import (
 	"context"
 	"encoding/json"
+	"encoding/xml" // Added
+	"flag"
 	"log"
 	"net/http"
 	"os"
-	"os/signal"
+	"os/signal" // Added
 	"syscall"
+
+	"github.com/yayacat/slgo/example/stationxml"
 
 	"github.com/bclswl0827/slgo"
 	cmap "github.com/orcaman/concurrent-map/v2"
-	messagebus "github.com/vardius/message-bus"
+	messagebus "github.com/vardius/message-bus" // Added
 )
+
+func fdsnStationHandler(p *provider) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/xml")
+
+		fdsnXML := stationxml.FDSNStationXML{
+			Source:         p.GetOrganization(),
+			SchemaVersion:  "1.0",
+			Xsi:            "http://www.w3.org/2001/XMLSchema-instance",
+			Xmlns:          "http://www.fdsn.org/xml/station/1",
+			SchemaLocation: "http://www.fdsn.org/xml/station/1 http://www.fdsn.org/xml/station/fdsn-station-1.0.xsd",
+		}
+
+		for _, s := range p.GetStationsData() {
+			network := stationxml.Network{
+				Code:        s.Network,
+				Description: s.Description,
+				StartDate:   stationxml.DateTime(p.GetStartTime()),
+			}
+
+			sta := stationxml.Station{
+				Code:        s.Station,
+				Description: s.Description,
+				Latitude:    s.Latitude,
+				Longitude:   s.Longitude,
+				Elevation:   0.0,
+				Site: stationxml.Site{
+					Name: s.Description,
+				},
+				CreationDate: stationxml.DateTime(p.GetStartTime()),
+				StartDate:    stationxml.DateTime(p.GetStartTime()),
+			}
+
+			for _, stream := range s.Streams {
+				channel := stationxml.Channel{
+					Code:       stream.SeedName,
+					Location:   stream.Location,
+					Type:       []string{stream.Type},
+					Latitude:   s.Latitude,
+					Longitude:  s.Longitude,
+					Elevation:  0.0,
+					Depth:      0.0,
+					SampleRate: SAMPLE_RATE,
+					Sensor: stationxml.Sensor{
+						Description: s.Description + " " + stream.SeedName,
+					},
+					Response: stationxml.Response{
+						InstrumentSensitivity: stationxml.InstrumentSensitivity{
+							Value:       1.0,
+							Frequency:   1.0,
+							InputUnits:  stationxml.Units{Name: "M/S"},
+							OutputUnits: stationxml.Units{Name: "COUNTS"},
+						},
+					},
+					CreationDate: stationxml.DateTime(p.GetStartTime()),
+					StartDate:    stationxml.DateTime(p.GetStartTime()),
+				}
+				sta.Channels = append(sta.Channels, channel)
+			}
+			network.Stations = append(network.Stations, sta)
+			fdsnXML.Networks = append(fdsnXML.Networks, network)
+		}
+
+		output, err := xml.MarshalIndent(fdsnXML, "", "  ")
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		w.Write([]byte(xml.Header))
+		w.Write(output)
+	}
+}
 
 const (
 	HOST = "0.0.0.0"
@@ -20,12 +97,15 @@ const (
 )
 
 func main() {
+	stationsPath := flag.String("stations", "stations.json", "path to stations.json file")
+	flag.Parse()
+
 	messageBus := messagebus.New(65535)
 
 	// log.Println("test this server with Swarm client: https://volcanoes.usgs.gov/software/swarm/download.shtml")
 	log.Printf("starting SeedLink server on %s:%d", HOST, PORT)
 
-	p, err := NewProvider("g:\\work_spaces\\slgo\\example\\stations.json")
+	p, err := NewProvider(*stationsPath)
 	if err != nil {
 		log.Fatalf("failed to create provider: %v", err)
 	}
@@ -86,6 +166,8 @@ func main() {
 				http.Error(w, "invalid request method", http.StatusMethodNotAllowed)
 			}
 		})
+
+		http.HandleFunc("/fdsnws/station/1/query", fdsnStationHandler(p))
 
 		log.Println("starting HTTP server on port 18080")
 		if err := http.ListenAndServe(":18080", nil); err != nil {
