@@ -8,12 +8,17 @@ import (
 	messagebus "github.com/vardius/message-bus"
 )
 
-type consumer struct {
-	messageBus  messagebus.MessageBus
-	subscribers cmap.ConcurrentMap[string, eventHandler]
+type subscriber struct {
+	handler eventHandler
+	topic   string
 }
 
-func (c *consumer) Subscribe(clientId string, channels []handlers.SeedLinkChannel, eventHandler func(handlers.SeedLinkDataPacket)) error {
+type consumer struct {
+	messageBus  messagebus.MessageBus
+	subscribers cmap.ConcurrentMap[string, subscriber]
+}
+
+func (c *consumer) Subscribe(clientId string, station string, channels []handlers.SeedLinkChannel, eventHandler func(handlers.SeedLinkDataPacket)) error {
 	if _, ok := c.subscribers.Get(clientId); ok {
 		return errors.New("this client has already subscribed")
 	}
@@ -48,17 +53,21 @@ func (c *consumer) Subscribe(clientId string, channels []handlers.SeedLinkChanne
 			}
 		}
 	}
-	c.subscribers.Set(clientId, handler)
-	c.messageBus.Subscribe(TOPIC_NAME, handler)
+	topic := TOPIC_NAME + "_" + station
+	c.subscribers.Set(clientId, subscriber{
+		handler: handler,
+		topic:   topic,
+	})
+	c.messageBus.Subscribe(topic, handler)
 	return nil
 }
 
 func (c *consumer) Unsubscribe(clientId string) error {
-	fn, ok := c.subscribers.Get(clientId)
+	sub, ok := c.subscribers.Get(clientId)
 	if !ok {
 		return errors.New("this client has not subscribed")
 	}
-	c.messageBus.Unsubscribe(TOPIC_NAME, fn)
+	c.messageBus.Unsubscribe(sub.topic, sub.handler)
 	c.subscribers.Remove(clientId)
 	return nil
 }

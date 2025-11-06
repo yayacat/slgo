@@ -63,6 +63,8 @@ type SeedLinkStation struct {
 	Station       string   `xml:"name,attr"`
 	Network       string   `xml:"network,attr"`
 	Description   string   `xml:"description,attr"`
+	Latitude      float64  `xml:"latitude,attr"`
+	Longitude     float64  `xml:"longitude,attr"`
 }
 
 // Stream field model of INFO STREAMS command
@@ -105,6 +107,6 @@ type SeedLinkProvider interface {
 
 // Consumer interface for SeedLink server to stream data
 type SeedLinkConsumer interface {
-	Subscribe(clientId string, channels []SeedLinkChannel, eventHandler func(SeedLinkDataPacket)) error
+	Subscribe(clientId string, station string, channels []SeedLinkChannel, eventHandler func(SeedLinkDataPacket)) error
 	Unsubscribe(clientId string) error
 }

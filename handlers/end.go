@@ -26,6 +26,7 @@ func (e *END) Callback(client *SeedLinkClient, provider SeedLinkProvider, consum
 	client.Streaming = true
 	err := consumer.Subscribe(
 		client.RemoteAddr().String(),
+		client.Station,
 		client.Channels,
 		func(data SeedLinkDataPacket) {
 			newSeq, dataBytes, err := SendSeedLinkPacket(station, location, network, e.DataType, client.GetSequence(), data)

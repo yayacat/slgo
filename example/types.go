@@ -1,11 +1,12 @@
 package main
 
 const (
-	SAMPLE_RATE = 100
-	TOPIC_NAME  = "seedlink-example"
+	SAMPLE_RATE = 50
+	TOPIC_NAME  = "seedlink"
 )
 
 type adcRawData struct {
+	Station    string
 	SampleRate int
 	Timestamp  int64
 	Channel_1  []int32
