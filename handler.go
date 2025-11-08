@@ -37,6 +37,9 @@ func (s *SeedLinkServer) handleConnection(ctx context.Context, client *handlers.
 
 			// Disconnect if BYE received
 			if clientMessage == "BYE" {
+				if client.Streaming {
+					s.Consumer.Unsubscribe(client.RemoteAddr().String())
+				}
 				return
 			}
 

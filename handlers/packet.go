@@ -8,8 +8,8 @@ import (
 	"github.com/bclswl0827/mseedio"
 )
 
-func chunkInt32Slice(data []int32, chunkSize int) [][]int32 {
-	var chunks [][]int32
+func chunkFloat32Slice(data []float32, chunkSize int) [][]float32 {
+	var chunks [][]float32
 	for i := 0; i < len(data); i += chunkSize {
 		end := i + chunkSize
 		if end > len(data) {
@@ -20,8 +20,16 @@ func chunkInt32Slice(data []int32, chunkSize int) [][]int32 {
 	return chunks
 }
 
+func convertFloat32ToInt32(c []float32, multiplier float32) []int32 {
+	var int32Data []int32
+	for _, v := range c {
+		int32Data = append(int32Data, int32(v*multiplier))
+	}
+	return int32Data
+}
+
 func SendSeedLinkPacket(station, location, network string, dataType int, sequence int64, data SeedLinkDataPacket) (newSequence int64, packetBuf []byte, err error) {
-	chunks := chunkInt32Slice(data.DataArr, CHUNK_SIZE)
+	chunks := chunkFloat32Slice(data.DataArr, CHUNK_SIZE)
 
 	dataSpanMs := 1000 / data.SampleRate
 	var buf bytes.Buffer
@@ -31,7 +39,9 @@ func SendSeedLinkPacket(station, location, network string, dataType int, sequenc
 		miniseed.Init(dataType, mseedio.MSBFIRST)
 
 		startTime := time.UnixMilli(data.Timestamp + int64(i*CHUNK_SIZE*dataSpanMs)).UTC()
-		err := miniseed.Append(c, &mseedio.AppendOptions{
+		int32Data := convertFloat32ToInt32(c, 1e6)
+		// log.Printf("Preparing MiniSEED record: int32Data=%v,NumSamples=%d", int32Data, len(int32Data))
+		err := miniseed.Append(int32Data, &mseedio.AppendOptions{
 			ChannelCode:    data.Channel,
 			StationCode:    station,
 			LocationCode:   location,

@@ -133,10 +133,19 @@ func main() {
 				return
 			}
 
+			// log.Printf("Received data: Station=%s, SeedName=%s, Data=%v", data.Station, data.SeedName, data.Data)
+
 			if data.Station == "" {
 				http.Error(w, "station is empty", http.StatusBadRequest)
 				return
 			}
+
+			if data.SeedName == "" {
+				http.Error(w, "seed name is empty", http.StatusBadRequest)
+				return
+			}
+
+			// log.Printf("Received data: Station=%s, SeedName=%s", data.Station, data.SeedName)
 			topic := TOPIC_NAME + "_" + data.Station
 			messageBus.Publish(topic, &data)
 			p.mutex.Lock()
@@ -145,27 +154,27 @@ func main() {
 			w.WriteHeader(http.StatusOK)
 		})
 
-		http.HandleFunc("/stations", func(w http.ResponseWriter, r *http.Request) {
-			switch r.Method {
-			case http.MethodGet:
-				stations := p.GetStationsData()
-				w.Header().Set("Content-Type", "application/json")
-				if err := json.NewEncoder(w).Encode(stations); err != nil {
-					http.Error(w, err.Error(), http.StatusInternalServerError)
-				}
-			case http.MethodPost:
-				var stations []Station
-				if err := json.NewDecoder(r.Body).Decode(&stations); err != nil {
-					http.Error(w, err.Error(), http.StatusBadRequest)
-					return
-				}
+		// http.HandleFunc("/stations", func(w http.ResponseWriter, r *http.Request) {
+		// 	switch r.Method {
+		// 	case http.MethodGet:
+		// 		stations := p.GetStationsData()
+		// 		w.Header().Set("Content-Type", "application/json")
+		// 		if err := json.NewEncoder(w).Encode(stations); err != nil {
+		// 			http.Error(w, err.Error(), http.StatusInternalServerError)
+		// 		}
+		// 	case http.MethodPost:
+		// 		var stations []Station
+		// 		if err := json.NewDecoder(r.Body).Decode(&stations); err != nil {
+		// 			http.Error(w, err.Error(), http.StatusBadRequest)
+		// 			return
+		// 		}
 
-				p.UpdateStations(stations)
-				w.WriteHeader(http.StatusOK)
-			default:
-				http.Error(w, "invalid request method", http.StatusMethodNotAllowed)
-			}
-		})
+		// 		p.UpdateStations(stations)
+		// 		w.WriteHeader(http.StatusOK)
+		// 	default:
+		// 		http.Error(w, "invalid request method", http.StatusMethodNotAllowed)
+		// 	}
+		// })
 
 		http.HandleFunc("/fdsnws/station/1/query", fdsnStationHandler(p))
 

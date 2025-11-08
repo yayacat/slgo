@@ -1,7 +1,7 @@
 # syntax=docker/dockerfile:1
 
 # Build stage
-FROM golang:1.20-alpine AS build
+FROM golang:1.25.3-alpine AS build
 
 WORKDIR /src
 
@@ -18,7 +18,7 @@ RUN go mod download
 COPY . .
 
 # Build the application
-RUN CGO_ENABLED=0 go build -o /bin/server ./example
+RUN cd example && CGO_ENABLED=0 go build -o /bin/server .
 
 # Final stage
 FROM alpine:latest

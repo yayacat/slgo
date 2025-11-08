@@ -29,16 +29,20 @@ func (e *END) Callback(client *SeedLinkClient, provider SeedLinkProvider, consum
 		client.Station,
 		client.Channels,
 		func(data SeedLinkDataPacket) {
+			// log.Printf("eventHandler received data: Timestamp=%s, Station=%s, Channel=%s, Data=%v", data.Timestamp, client.Station, data.Channel, data.DataArr)
 			newSeq, dataBytes, err := SendSeedLinkPacket(station, location, network, e.DataType, client.GetSequence(), data)
 			if err != nil {
+				// log.Printf("Error in SendSeedLinkPacket: %v", err)
 				consumer.Unsubscribe(client.RemoteAddr().String())
 				client.Write([]byte(RES_ERR))
 				client.Close()
 				return
 			}
+			// log.Printf("Sending %d bytes to client", len(dataBytes))
 			if _, err = client.Write(dataBytes); err != nil {
 				consumer.Unsubscribe(client.RemoteAddr().String())
 				client.Close()
+				// log.Printf("Error writing to client: %v", err)
 				return
 			}
 			client.SetSequence(newSeq)

@@ -131,9 +131,9 @@ func (p *provider) QueryHistory(startTime, endTime time.Time, channels []handler
 	p.mutex.RLock()
 	defer p.mutex.RUnlock()
 
-	if p.hasReceivedRealData {
-		return []handlers.SeedLinkDataPacket{}, nil
-	}
+	// if p.hasReceivedRealData {
+	// 	return []handlers.SeedLinkDataPacket{}, nil
+	// }
 
 	var dataPackets []handlers.SeedLinkDataPacket
 
@@ -145,7 +145,7 @@ func (p *provider) QueryHistory(startTime, endTime time.Time, channels []handler
 				Timestamp:  i,
 				SampleRate: SAMPLE_RATE,
 				Channel:    channel.ChannelName,
-				DataArr:    generateRandomArray(SAMPLE_RATE, -32768, 32768),
+				DataArr:    []float32{},
 			}
 			dataPackets = append(dataPackets, dataPacket)
 		}

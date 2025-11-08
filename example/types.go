@@ -7,11 +7,10 @@ const (
 
 type adcRawData struct {
 	Station    string
+	SeedName   string
 	SampleRate int
 	Timestamp  int64
-	Channel_1  []int32
-	Channel_2  []int32
-	Channel_3  []int32
+	Data       []float32
 }
 
 type eventHandler = func(data *adcRawData)

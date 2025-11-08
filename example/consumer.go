@@ -28,29 +28,60 @@ func (c *consumer) Subscribe(clientId string, station string, channels []handler
 			if channel.ChannelType != "D" {
 				continue
 			}
-			switch channel.ChannelName {
-			case "EHZ":
+			// log.Printf("Matching data: Station=%s, SeedName=%s with Channel=%s", data.Station, data.SeedName, channel.ChannelName)
+			if data.SeedName == channel.ChannelName {
 				eventHandler(handlers.SeedLinkDataPacket{
 					Timestamp:  data.Timestamp,
 					SampleRate: data.SampleRate,
 					Channel:    channel.ChannelName,
-					DataArr:    data.Channel_1,
-				})
-			case "EHE":
-				eventHandler(handlers.SeedLinkDataPacket{
-					Timestamp:  data.Timestamp,
-					SampleRate: data.SampleRate,
-					Channel:    channel.ChannelName,
-					DataArr:    data.Channel_2,
-				})
-			case "EHN":
-				eventHandler(handlers.SeedLinkDataPacket{
-					Timestamp:  data.Timestamp,
-					SampleRate: data.SampleRate,
-					Channel:    channel.ChannelName,
-					DataArr:    data.Channel_3,
+					DataArr:    data.Data,
 				})
 			}
+
+			// switch channel.ChannelName {
+			// 	case "EHN":
+			// 		eventHandler(handlers.SeedLinkDataPacket{
+			// 			Timestamp:  data.Timestamp,
+			// 			SampleRate: data.SampleRate,
+			// 			Channel:    channel.ChannelName,
+			// 			DataArr:    data.Channel_1,
+			// 		})
+			// 	case "EHE":
+			// 		eventHandler(handlers.SeedLinkDataPacket{
+			// 			Timestamp:  data.Timestamp,
+			// 			SampleRate: data.SampleRate,
+			// 			Channel:    channel.ChannelName,
+			// 			DataArr:    data.Channel_2,
+			// 		})
+			// 	case "EHZ":
+			// 		eventHandler(handlers.SeedLinkDataPacket{
+			// 			Timestamp:  data.Timestamp,
+			// 			SampleRate: data.SampleRate,
+			// 			Channel:    channel.ChannelName,
+			// 			DataArr:    data.Channel_3,
+			// 		})
+			// 	case "SHN":
+			// 		eventHandler(handlers.SeedLinkDataPacket{
+			// 			Timestamp:  data.Timestamp,
+			// 			SampleRate: data.SampleRate,
+			// 			Channel:    channel.ChannelName,
+			// 			DataArr:    data.Channel_1,
+			// 		})
+			// 	case "SHE":
+			// 		eventHandler(handlers.SeedLinkDataPacket{
+			// 			Timestamp:  data.Timestamp,
+			// 			SampleRate: data.SampleRate,
+			// 			Channel:    channel.ChannelName,
+			// 			DataArr:    data.Channel_2,
+			// 		})
+			// 	case "SHZ":
+			// 		eventHandler(handlers.SeedLinkDataPacket{
+			// 			Timestamp:  data.Timestamp,
+			// 			SampleRate: data.SampleRate,
+			// 			Channel:    channel.ChannelName,
+			// 			DataArr:    data.Channel_3,
+			// 		})
+			// }
 		}
 	}
 	topic := TOPIC_NAME + "_" + station

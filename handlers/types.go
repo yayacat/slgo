@@ -90,7 +90,7 @@ type SeedLinkDataPacket struct {
 	Timestamp  int64
 	SampleRate int
 	Channel    string
-	DataArr    []int32
+	DataArr    []float32
 }
 
 // Provider interface for SeedLink server to get information
