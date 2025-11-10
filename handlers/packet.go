@@ -39,7 +39,7 @@ func SendSeedLinkPacket(station, location, network string, dataType int, sequenc
 		miniseed.Init(dataType, mseedio.MSBFIRST)
 
 		startTime := time.UnixMilli(data.Timestamp + int64(i*CHUNK_SIZE*dataSpanMs)).UTC()
-		int32Data := convertFloat32ToInt32(c, 1e6)
+		int32Data := convertFloat32ToInt32(c, 1e4)
 		// log.Printf("Preparing MiniSEED record: int32Data=%v,NumSamples=%d", int32Data, len(int32Data))
 		err := miniseed.Append(int32Data, &mseedio.AppendOptions{
 			ChannelCode:    data.Channel,
