@@ -2,6 +2,7 @@ package main
 
 import (
 	"errors"
+	// "log"
 
 	cmap "github.com/orcaman/concurrent-map/v2"
 	messagebus "github.com/vardius/message-bus"
@@ -18,7 +19,7 @@ type consumer struct {
 	subscribers cmap.ConcurrentMap[string, subscriber]
 }
 
-func (c *consumer) Subscribe(clientId string, station string, channels []handlers.SeedLinkChannel, eventHandler func(handlers.SeedLinkDataPacket)) error {
+func (c *consumer) Subscribe(clientId string, station string, channels []handlers.SeedLinkChannel, eventHandler func(handlers.SeedLinkDataPacket), request_id string) error {
 	if _, ok := c.subscribers.Get(clientId); ok {
 		return errors.New("this client has already subscribed")
 	}
@@ -28,60 +29,15 @@ func (c *consumer) Subscribe(clientId string, station string, channels []handler
 			if channel.ChannelType != "D" {
 				continue
 			}
-			// log.Printf("Matching data: Station=%s, SeedName=%s with Channel=%s", data.Station, data.SeedName, channel.ChannelName)
+			// log.Printf("Matching data: request_id=%s, Station=%s, SeedName=%s with Channel=%s", request_id, data.Station, data.SeedName, channel.ChannelName)
 			if data.SeedName == channel.ChannelName {
-				eventHandler(handlers.SeedLinkDataPacket{
+				go eventHandler(handlers.SeedLinkDataPacket{
 					Timestamp:  data.Timestamp,
 					SampleRate: data.SampleRate,
 					Channel:    channel.ChannelName,
 					DataArr:    data.Data,
 				})
 			}
-
-			// switch channel.ChannelName {
-			// 	case "EHN":
-			// 		eventHandler(handlers.SeedLinkDataPacket{
-			// 			Timestamp:  data.Timestamp,
-			// 			SampleRate: data.SampleRate,
-			// 			Channel:    channel.ChannelName,
-			// 			DataArr:    data.Channel_1,
-			// 		})
-			// 	case "EHE":
-			// 		eventHandler(handlers.SeedLinkDataPacket{
-			// 			Timestamp:  data.Timestamp,
-			// 			SampleRate: data.SampleRate,
-			// 			Channel:    channel.ChannelName,
-			// 			DataArr:    data.Channel_2,
-			// 		})
-			// 	case "EHZ":
-			// 		eventHandler(handlers.SeedLinkDataPacket{
-			// 			Timestamp:  data.Timestamp,
-			// 			SampleRate: data.SampleRate,
-			// 			Channel:    channel.ChannelName,
-			// 			DataArr:    data.Channel_3,
-			// 		})
-			// 	case "SHN":
-			// 		eventHandler(handlers.SeedLinkDataPacket{
-			// 			Timestamp:  data.Timestamp,
-			// 			SampleRate: data.SampleRate,
-			// 			Channel:    channel.ChannelName,
-			// 			DataArr:    data.Channel_1,
-			// 		})
-			// 	case "SHE":
-			// 		eventHandler(handlers.SeedLinkDataPacket{
-			// 			Timestamp:  data.Timestamp,
-			// 			SampleRate: data.SampleRate,
-			// 			Channel:    channel.ChannelName,
-			// 			DataArr:    data.Channel_2,
-			// 		})
-			// 	case "SHZ":
-			// 		eventHandler(handlers.SeedLinkDataPacket{
-			// 			Timestamp:  data.Timestamp,
-			// 			SampleRate: data.SampleRate,
-			// 			Channel:    channel.ChannelName,
-			// 			DataArr:    data.Channel_3,
-			// 		})
-			// }
 		}
 	}
 	topic := TOPIC_NAME + "_" + station

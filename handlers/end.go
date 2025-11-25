@@ -2,6 +2,8 @@ package handlers
 
 import (
 	"bytes"
+	"crypto/rand"
+	"encoding/hex"
 	"errors"
 )
 
@@ -24,7 +26,15 @@ func (e *END) Callback(client *SeedLinkClient, provider SeedLinkProvider, consum
 
 	// Subscribe to the message queue
 	client.Streaming = true
-	err := consumer.Subscribe(
+	// Generate a random request_id
+	randomBytes := make([]byte, 16)
+	_, err := rand.Read(randomBytes)
+	if err != nil {
+		client.Write([]byte(RES_ERR))
+		return err
+	}
+	request_id := hex.EncodeToString(randomBytes)
+	err = consumer.Subscribe(
 		client.RemoteAddr().String(),
 		client.Station,
 		client.Channels,
@@ -47,6 +57,7 @@ func (e *END) Callback(client *SeedLinkClient, provider SeedLinkProvider, consum
 			}
 			client.SetSequence(newSeq)
 		},
+		request_id,
 	)
 	if err != nil {
 		client.Write([]byte(RES_ERR))

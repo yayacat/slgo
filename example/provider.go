@@ -76,7 +76,7 @@ func (p *provider) GetCurrentTime() time.Time {
 }
 
 func (p *provider) GetOrganization() string {
-	return "anyshake.org"
+	return "exptech.dev"
 }
 
 func (p *provider) GetStations() []handlers.SeedLinkStation {

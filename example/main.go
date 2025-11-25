@@ -21,6 +21,7 @@ import (
 func fdsnStationHandler(p *provider) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/xml")
+		w.Header().Set("Cache-Control", "no-cache, no-store, must-revalidate")
 
 		fdsnXML := stationxml.FDSNStationXML{
 			Source:         p.GetOrganization(),
