@@ -92,11 +92,6 @@ func fdsnStationHandler(p *provider) http.HandlerFunc {
 	}
 }
 
-const (
-	HOST = "0.0.0.0"
-	PORT = 18000
-)
-
 func main() {
 	stationsPath := flag.String("stations", "stations.json", "path to stations.json file")
 	flag.Parse()

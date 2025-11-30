@@ -3,6 +3,8 @@ package main
 const (
 	SAMPLE_RATE = 50
 	TOPIC_NAME  = "seedlink"
+	HOST        = "0.0.0.0"
+	PORT        = 18000
 )
 
 type adcRawData struct {
