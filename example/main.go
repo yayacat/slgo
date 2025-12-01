@@ -41,9 +41,9 @@ func fdsnStationHandler(p *provider) http.HandlerFunc {
 			sta := stationxml.Station{
 				Code:        s.Station,
 				Description: s.Description,
-				Latitude:    s.Latitude,
-				Longitude:   s.Longitude,
-				Elevation:   0.0,
+				// Latitude:    s.Latitude,
+				// Longitude:   s.Longitude,
+				Elevation: 0.0,
 				Site: stationxml.Site{
 					Name: s.Description,
 				},
@@ -53,11 +53,11 @@ func fdsnStationHandler(p *provider) http.HandlerFunc {
 
 			for _, stream := range s.Streams {
 				channel := stationxml.Channel{
-					Code:       stream.SeedName,
-					Location:   stream.Location,
-					Type:       []string{stream.Type},
-					Latitude:   s.Latitude,
-					Longitude:  s.Longitude,
+					Code:     stream.SeedName,
+					Location: stream.Location,
+					Type:     []string{stream.Type},
+					// Latitude:   s.Latitude,
+					// Longitude:  s.Longitude,
 					Elevation:  0.0,
 					Depth:      0.0,
 					SampleRate: SAMPLE_RATE,
@@ -96,7 +96,7 @@ func main() {
 	stationsPath := flag.String("stations", "stations.json", "path to stations.json file")
 	flag.Parse()
 
-	messageBus := messagebus.New(65535)
+	messageBus := messagebus.New(999999)
 
 	// log.Println("test this server with Swarm client: https://volcanoes.usgs.gov/software/swarm/download.shtml")
 	log.Printf("starting SeedLink server on %s:%d", HOST, PORT)

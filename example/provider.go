@@ -91,8 +91,8 @@ func (p *provider) GetStations() []handlers.SeedLinkStation {
 			Station:       s.Station,
 			Network:       s.Network,
 			Description:   s.Description,
-			Latitude:      s.Latitude,
-			Longitude:     s.Longitude,
+			// Latitude:      s.Latitude,
+			// Longitude:     s.Longitude,
 		})
 	}
 	return slStations

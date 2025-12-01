@@ -27,10 +27,10 @@ type Network struct {
 
 // Station 表示測站資訊
 type Station struct {
-	Code         string    `xml:"code,attr"`
-	Description  string    `xml:"Description"`
-	Latitude     float64   `xml:"Latitude"`
-	Longitude    float64   `xml:"Longitude"`
+	Code        string `xml:"code,attr"`
+	Description string `xml:"Description"`
+	// Latitude     float64   `xml:"Latitude"`
+	// Longitude    float64   `xml:"Longitude"`
 	Elevation    float64   `xml:"Elevation"`
 	Site         Site      `xml:"Site"`
 	CreationDate string    `xml:"CreationDate"`
@@ -45,11 +45,11 @@ type Site struct {
 
 // Channel 表示頻道資訊
 type Channel struct {
-	Code         string   `xml:"code,attr"`
-	Location     string   `xml:"locationCode,attr"`
-	Type         []string `xml:"Type"`
-	Latitude     float64  `xml:"Latitude"`
-	Longitude    float64  `xml:"Longitude"`
+	Code     string   `xml:"code,attr"`
+	Location string   `xml:"locationCode,attr"`
+	Type     []string `xml:"Type"`
+	// Latitude     float64  `xml:"Latitude"`
+	// Longitude    float64  `xml:"Longitude"`
 	Elevation    float64  `xml:"Elevation"`
 	Depth        float64  `xml:"Depth"`
 	SampleRate   float64  `xml:"SampleRate"`

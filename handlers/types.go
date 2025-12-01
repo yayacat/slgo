@@ -63,8 +63,8 @@ type SeedLinkStation struct {
 	Station       string   `xml:"name,attr"`
 	Network       string   `xml:"network,attr"`
 	Description   string   `xml:"description,attr"`
-	Latitude      float64  `xml:"latitude,attr"`
-	Longitude     float64  `xml:"longitude,attr"`
+	// Latitude      float64  `xml:"latitude,attr"`
+	// Longitude     float64  `xml:"longitude,attr"`
 }
 
 // Stream field model of INFO STREAMS command
