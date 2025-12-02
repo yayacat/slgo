@@ -96,7 +96,7 @@ func main() {
 	stationsPath := flag.String("stations", "stations.json", "path to stations.json file")
 	flag.Parse()
 
-	messageBus := messagebus.New(999999)
+	messageBus := messagebus.New(99999)
 
 	// log.Println("test this server with Swarm client: https://volcanoes.usgs.gov/software/swarm/download.shtml")
 	log.Printf("starting SeedLink server on %s:%d", HOST, PORT)
